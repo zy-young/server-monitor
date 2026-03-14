@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器监控系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>服务器实时监控</h1>
+            <div class="header-info">
+                <div class="status-indicator">
+                    <span class="status-label">服务器状态：</span>
+                    <span class="status-dot" id="status-dot"></span>
+                    <span class="status-text" id="status-text">正常</span>
+                </div>
+                <div class="last-update">
+                    <span class="update-label">最后更新：</span>
+                    <span class="update-time" id="update-time">--:--:--</span>
+                </div>
+                <button class="theme-toggle" id="theme-toggle" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 系统信息区域 -->
+        <div class="system-info">
+            <h2>系统信息</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">主机名：</span>
+                    <span class="info-value" id="hostname">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">系统版本：</span>
+                    <span class="info-value" id="system-version">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">CPU核心：</span>
+                    <span class="info-value" id="cpu-cores">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">内存总量：</span>
+                    <span class="info-value" id="memory-total">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">运行时间：</span>
+                    <span class="info-value" id="uptime">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">启动时间：</span>
+                    <span class="info-value" id="boot-time">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h3>CPU使用率</h3>
+                <div class="value" id="cpu-value">0%</div>
+                <div class="progress-bar">
+                    <div class="progress" id="cpu-progress"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>内存使用率</h3>
+                <div class="value" id="memory-value">0%</div>
+                <div class="progress-bar">
+                    <div class="progress" id="memory-progress"></div>
+                </div>
+                <div class="detail" id="memory-detail"></div>
+            </div>
+
+            <div class="card">
+                <h3 id="metric-title">磁盘使用率</h3>
+                <div class="value" id="disk-value">0%</div>
+                <div class="progress-bar">
+                    <div class="progress" id="disk-progress"></div>
+                </div>
+                <div class="detail" id="disk-detail"></div>
+            </div>
+        </div>
+
+        <!-- 网络使用率长条 -->
+        <div class="network-bar">
+            <h3>网络使用率</h3>
+            <div class="network-content">
+                <div class="network-item-bar">
+                    <div class="network-label-bar">
+                        <span class="network-icon">↑</span>
+                        <span>上传速度</span>
+                    </div>
+                    <div class="network-speed-bar">
+                        <span class="speed-value" id="upload-speed">0 KB/s</span>
+                    </div>
+                </div>
+                <div class="network-item-bar">
+                    <div class="network-label-bar">
+                        <span class="network-icon">↓</span>
+                        <span>下载速度</span>
+                    </div>
+                    <div class="network-speed-bar">
+                        <span class="speed-value" id="download-speed">0 KB/s</span>
+                    </div>
+                </div>
+                <div class="network-total">
+                    <span id="network-detail">总发送: 0GB / 总接收: 0GB</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-container">
+                <h3>历史趋势（最近10分钟）</h3>
+                <canvas id="historyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 进程信息区域 -->
+        <div class="process-info">
+            <h2>进程监控</h2>
+            <div class="process-tables">
+                <div class="process-section">
+                    <h3>CPU占用前10进程</h3>
+                    <table class="process-table">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>进程名</th>
+                                <th>CPU使用率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cpu-process-body">
+                            <!-- 动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="process-section">
+                    <h3>内存占用前10进程</h3>
+                    <table class="process-table">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>进程名</th>
+                                <th>内存使用率</th>
+                            </tr>
+                        </thead>
+                        <tbody id="memory-process-body">
+                            <!-- 动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 磁盘详细信息区域 -->
+        <div class="disk-info">
+            <h2>磁盘信息</h2>
+            <div class="disk-table-container">
+                <table class="disk-table">
+                    <thead>
+                        <tr>
+                            <th>挂载点</th>
+                            <th>设备</th>
+                            <th>文件系统</th>
+                            <th>总容量</th>
+                            <th>已用</th>
+                            <th>可用</th>
+                            <th>使用率</th>
+                        </tr>
+                    </thead>
+                    <tbody id="disk-table-body">
+                        <!-- 动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
