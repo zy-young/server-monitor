@@ -427,7 +427,7 @@ h2 {
 
 .network-content {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 30px;
     align-items: center;
 }
@@ -466,14 +466,12 @@ h2 {
     color: #ffffff;
 }
 
-.network-total {
-    padding: 15px 20px;
-    background: #1E1E1E;
-    border-radius: 10px;
-    color: #b0b0b0;
-    font-size: 0.9em;
+/* 累计流量文字单独缩小，保持一行显示 */
+#network-detail {
+    font-size: 1.1em;
     white-space: nowrap;
 }
+
 
 @media (max-width: 768px) {
     .network-content {
