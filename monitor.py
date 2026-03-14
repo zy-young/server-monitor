@@ -267,6 +267,9 @@ class SystemMonitor:
             try:
                 # 获取进程信息
                 pinfo = proc.info
+                # 跳过空闲进程，避免与总CPU使用率产生直观冲突（特别是Windows上的 System Idle Process）
+                if pinfo['name'] in ('System Idle Process', 'Idle'):
+                    continue
                 # 单独调用cpu_percent和memory_percent方法
                 cpu_percent = proc.cpu_percent(interval=0) / psutil.cpu_count()  # 除以CPU核心数，得到实际百分比
                 memory_percent = proc.memory_percent()

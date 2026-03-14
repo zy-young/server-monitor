@@ -167,7 +167,8 @@ async function loadHistoryData() {
         const diskData = [];
 
         data.forEach(item => {
-            const date = new Date(item.timestamp);
+            // SQLite 默认使用 UTC 时间，这里按 UTC 解析再转换为浏览器本地时间
+            const date = new Date(item.timestamp + 'Z');
             labels.push(date.toLocaleTimeString('zh-CN'));
             cpuData.push(item.cpu);
             memoryData.push(item.memory);

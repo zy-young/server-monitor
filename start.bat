@@ -42,14 +42,13 @@ echo.
 echo [4/4] 启动应用...
 echo ========================================
 echo 应用将在 http://localhost:5000 运行
-echo 按 Ctrl+C 停止服务
+echo 窗口将最小化到后台运行
+echo 如需停止服务, 请在任务管理器结束 python 进程
 echo ========================================
 echo.
-python app.py
 
-REM 如果应用异常退出，暂停以便查看错误
-if errorlevel 1 (
-    echo.
-    echo 应用异常退出，请检查错误信息
-    pause
-)
+REM 最小化启动 Flask 应用到后台
+start "" /min python app.py
+
+REM 当前启动脚本直接退出
+exit /b 0

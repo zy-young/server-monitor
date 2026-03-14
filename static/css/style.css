@@ -590,7 +590,8 @@ canvas {
 
 .process-tables {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    /* 默认尽量保持左右两列，在屏幕变窄时再自动折行 */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
     margin-top: 20px;
 }
